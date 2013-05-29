@@ -34,7 +34,7 @@ module ScrapeHelper
         album_document = get_document album_url
         album_html = album_document.css('#main').first.to_html
 
-        # Idempotent save to the database, idempotently.
+        # Find or save the review.
         review_page = Review.first_or_create(:url => url).update_attribute(:html, html)
         sleep(SLEEP_SECONDS.seconds)
       end  
