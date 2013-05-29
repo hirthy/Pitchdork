@@ -3,11 +3,15 @@ module ScrapeHelper
   require 'nokogiri'
   require 'open-uri'
 
-  # How long we sleep between album review page scrapes.
+  # Length of wait between album review page scrapes.
   SLEEP_SECONDS = 7
 
-  # How many times we retry a url before giving up.
+  # Number of retries on a URL.
   MAX_RETRY_ATTEMPTS = 10 
+
+  SCORE_SELECTOR = 'span.score'
+  ARTIST_SELECTOR = 'h1'
+  ALBUM_TITLE_SELECTOR = 'h2'
 
   # Downloads each album review on the specified pages and stores them in the database.
   #
@@ -30,25 +34,11 @@ module ScrapeHelper
         album_document = get_document album_url
         album_html = album_document.css('#main').first.to_html
 
-        # Save to the database.
-        update_or_create_document(album_url, album_html)
-
+        # Idempotent save to the database, idempotently.
+        review_page = Review.first_or_create(:url => url).update_attribute(:html, html)
         sleep(SLEEP_SECONDS.seconds)
       end  
     end
-  end
-
-  # Updates or creates a document with url attribute 'url'.
-  #
-  # @param url  url property of the document.
-  # @param html html property value of the document.
-  def update_or_create_document(url, html)
-    existing_page = ReviewPage.where(:url => url).first
-    review_page = existing_page.nil? ? ReviewPage.new : existing_page
-
-    review_page.url = url
-    review_page.html = html
-    review_page.save
   end
 
   # Gets a Nokogiri document for the given url.
@@ -74,4 +64,45 @@ module ScrapeHelper
 
     document
   end
+
+  # Gets score from review object.
+  #
+  # @param review   Review from which the score should be extracted.
+  def enrich_review_with_score(review)
+    review.score = get_text_from_review(review, SCORE_SELECTOR).to_f
+    Rails.logger.info "Setting score for '#{review.url}' as '#{review.score}'"
+  end
+
+  # Gets artist from review object.
+  #
+  # @param review   Review from which the artist should be extracted.
+  def enrich_review_with_artist(review)
+    review.artist = get_text_from_review(review, ARTIST_SELECTOR)
+    Rails.logger.info "Setting artist for '#{review.url}' as '#{review.artist}'"
+  end
+
+  # Gets album title from review object.
+  #
+  # @param review   Review from which the album title should be extracted.
+  def enrich_review_with_album_title(review)
+    review.album_title = get_text_from_review(review, ALBUM_TITLE_SELECTOR)
+    Rails.logger.info "Setting album title for '#{review.url}' as '#{review.album_title}'"
+  end
+
+  # Extracts text from review using a CSS selector.
+  #
+  # @param review   Review from which the text should be extracted.
+  # @param selector CSS selector. First match is returned as a string.
+  def get_text_from_review(review, selector)
+    doc = Nokogiri::HTML(review.html)
+    text = doc.css(selector)
+
+    if text.blank? || text.first.blank? || text.first.content.blank?
+      Rails.logger.warn "No match found for selector #{selector}." 
+      return nil
+    end
+
+    text.first.content.strip
+  end
+
 end

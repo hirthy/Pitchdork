@@ -11,4 +11,37 @@ namespace :scrape do
     Rails.logger.info "Done"
   end
 
+  task :find_scores => :environment do |t, args|
+    Rails.logger.info "Finding the scores for all Reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_score review
+      review.save
+    end
+
+    Rails.logger.info "Done"
+  end
+
+  task :find_artists => :environment do |t, args|
+    Rails.logger.info "Finding the artists for all Reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_artist review
+      review.save
+    end
+
+    Rails.logger.info "Done"
+  end
+
+  task :find_album_titles => :environment do |t, args|
+    Rails.logger.info "Finding the album titles for all Reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_album_title review
+      review.save
+    end
+
+    Rails.logger.info "Done"
+  end
+
 end
