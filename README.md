@@ -1,6 +1,6 @@
 # Pitchdork
 
-Pitchdork is a tool for scraping information from the record review site [Pitchfork](http://pitchfork.com/).
+Pitchdork is a tool for scraping information from the record review site [Pitchfork](http://pitchfork.com/) / enriching it with Spotify Metadata. Frontend still to come.
 
 # Download the reviews
 This command must be done before any of the extraction commands. It allows you to download all reviews into your MongoDB database: `rake "scrape:slurp_reviews[MINIMUM_PAGE,MAXIMUM_PAGE]"`. Once complete, you will have several thousand Review objects in your database containing a **url** and an **html** property.
@@ -19,3 +19,6 @@ The **html** property of the **Review** model is not modified during the extract
 
 ## Extract album titles
 `rake "scrape:find_album_titles`
+
+## Find Spotify Metadata
+`rake "scrape:find_spotify_metadata`
