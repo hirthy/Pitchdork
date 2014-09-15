@@ -1,19 +1,20 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '~> 3.2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 # Database
-gem 'mongoid'
+gem 'mongoid', '~> 3.1'
 
 # Scraping
 gem 'nokogiri'
 
-#Debugging
-gem 'pry'
-
+# Misc
+gem 'rspotify', '~> 1.2'
+gem 'text'
+gem 'angularjs-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
