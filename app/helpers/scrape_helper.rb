@@ -2,9 +2,16 @@ module ScrapeHelper
   require 'mongoid'
   require 'nokogiri'
   require 'open-uri'
+  require 'rspotify'
 
   # Length of wait between album review page scrapes.
   SLEEP_SECONDS = 7
+
+  # Don't iterate through more than this many artists matches when searching for matching album.
+  MAX_ARTIST_CHECKS = 5
+
+  # Don't iterate through more than this many album matches when searching for matching album.
+  MAX_ALBUM_CHECKS = 5
 
   # Number of retries on a URL.
   MAX_RETRY_ATTEMPTS = 10 
@@ -35,7 +42,7 @@ module ScrapeHelper
         album_html = album_document.css('#main').first.to_html
 
         # Find or save the review.
-        review_page = Review.first_or_create(:url => url).update_attribute(:html, html)
+        review_page = Review.where(:url => album_url).first_or_create.update_attribute(:html, album_html)
         sleep(SLEEP_SECONDS.seconds)
       end  
     end
@@ -54,12 +61,12 @@ module ScrapeHelper
 
       if (attempts < MAX_RETRY_ATTEMPTS)
         Rails.logger.info "Retrying."
+        attempts += 1
         retry
       else
         raise "Maximum number of retries on #{url}"
       end
 
-      attempts += 1
     end
 
     document
@@ -87,6 +94,70 @@ module ScrapeHelper
   def enrich_review_with_album_title(review)
     review.album_title = get_text_from_review(review, ALBUM_TITLE_SELECTOR)
     Rails.logger.info "Setting album title for '#{review.url}' as '#{review.album_title}'"
+  end
+
+  # Gets Spotify metadata for review object.
+  #
+  # @param review   Review to enrich with Spotify metadata.
+  def enrich_review_with_spotify_metadata(review)
+    artist_matches = RSpotify::Artist.search("#{review.artist}")
+
+    artist_id = nil
+    artist_popularity = nil
+    album_popularity = nil
+    album_id = nil
+    genres = []
+    release_date = nil
+    track_ids = []
+
+    artist_matches.each_with_index do |artist, index|
+      break if index == MAX_ARTIST_CHECKS
+
+      # First try by artist.
+      artist.albums.each do |album|
+        if Text::Levenshtein.distance(album.name, review.album_title) < 5
+          artist_id = artist.id
+          album_id = album.id
+          artist_popularity = artist.popularity
+          album_popularity = album.popularity
+          release_date = album.release_date
+          genres = album.genres
+          track_ids = album.tracks.map {|t| t.id }.compact
+          break
+        end
+      end
+
+      # Try album endpoint if no match by artist.
+      if not album_id
+        album_matches = RSpotify::Album.search("#{review.album_title}")
+
+        album_matches.each_with_index do |album, index|
+          break if index == MAX_ALBUM_CHECKS
+          if Text::Levenshtein.distance(album.artists[0].name, review.artist) < 5
+            artist_id = artist.id
+            album_id = album.id
+            artist_popularity = artist.popularity
+            album_popularity = album.popularity
+            release_date = album.release_date
+            genres = album.genres
+            track_ids = album.tracks.map {|t| t.id }.compact
+            break
+          end
+        end
+      end
+    end
+
+    if artist_id
+      Rails.logger.info "Setting Spotify metadata for '#{review.artist} - #{review.album_title}'"
+      review.spotify_artist_id = artist_id
+      review.spotify_artist_popularity = artist_popularity
+      review.spotify_album_popularity = album_popularity
+      review.spotify_track_ids = track_ids
+      review.spotify_genres = genres
+      review.spotify_release_date = release_date
+    else
+      Rails.logger.info "Couldn't find spotify Metadata for '#{review.artist} - #{review.album_title}'"
+    end
   end
 
   # Extracts text from review using a CSS selector.

@@ -1,5 +1,5 @@
 require "#{Rails.root}/app/helpers/scrape_helper"
-require "pry"
+require "text"
 include ScrapeHelper
 
 namespace :scrape do
@@ -43,5 +43,27 @@ namespace :scrape do
 
     Rails.logger.info "Done"
   end
+
+  task :find_spotify_metadata => :environment do |t, args|
+    Rails.logger.info "Finding the Spotify metadata for all reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_spotify_metadata review
+      success_count = 0
+      fail_count = 0
+
+      if review.spotify_album_id
+        review.save
+        success_count += 1
+      else
+        fail_count += 1
+      end
+    end
+
+    Rails.logger.info "Found Spotify Metadata for #{success_count} reviews, failed for #{fail_count}."
+    Rails.logger.info "Done."
+  end
+
+
 
 end
