@@ -29,6 +29,6 @@ Downloads the album artwork from Pitchfork's servers and places it in `/app/asse
 ## Add Metadata
 
 ### Find Spotify metadata
-`rake "scrape:find_spotify_metadata`
+`rake "scrape:find_spotify_metadata"`
 
 Grabs metadata (track uris, album uris, popularity score, et cetera) from Spotify's Web API.
