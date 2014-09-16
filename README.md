@@ -20,5 +20,10 @@ The **html** property of the **Review** model is not modified during the extract
 ## Extract album titles
 `rake "scrape:find_album_titles`
 
-## Find Spotify Metadata
+## Download album artwork
+Downloads the album artwork from Pitchfork's servers and places it in `/app/assets/images/album_art`. It also sets the image name in the Review object.
+`rake "scrape:find_album_images`
+
+## Find Spotify metadata
+Grabs metadata (track uris, album uris, popularity score, et cetera) from Spotify's Web API.
 `rake "scrape:find_spotify_metadata`

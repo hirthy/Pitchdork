@@ -9,9 +9,11 @@ capybara-*.html
 /log/*
 /tmp/*
 /db/*.sqlite3
-/public/system/*
+/public/*
+/app/assets/images/album_art
 /coverage/
 /spec/tmp/*
+/public/assets/*
 **.orig
 rerun.txt
 pickle-email-*.html

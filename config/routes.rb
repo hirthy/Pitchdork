@@ -1,4 +1,12 @@
 Pitchdork::Application.routes.draw do
+  scope 'api', module: 'api' do
+    namespace :v1 do
+
+      resources :reviews, :only => [:index, :show]
+
+    end
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

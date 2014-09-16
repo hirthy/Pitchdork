@@ -44,13 +44,21 @@ namespace :scrape do
     Rails.logger.info "Done"
   end
 
+  task :find_album_images => :environment do |t, args|
+    Review.all.each do |review|
+      enrich_review_with_image review
+      review.save
+    end
+  end
+
   task :find_spotify_metadata => :environment do |t, args|
     Rails.logger.info "Finding the Spotify metadata for all reviews."
 
+    success_count = 0
+    fail_count = 0
+
     Review.all.each do |review|
       enrich_review_with_spotify_metadata review
-      success_count = 0
-      fail_count = 0
 
       if review.spotify_album_id
         review.save

@@ -3,6 +3,9 @@ module ScrapeHelper
   require 'nokogiri'
   require 'open-uri'
   require 'rspotify'
+  require 'common_utils'
+
+  include CommonUtils
 
   # Length of wait between album review page scrapes.
   SLEEP_SECONDS = 7
@@ -19,6 +22,7 @@ module ScrapeHelper
   SCORE_SELECTOR = 'span.score'
   ARTIST_SELECTOR = 'h1'
   ALBUM_TITLE_SELECTOR = 'h2'
+  ALBUM_IMAGE_SELECTOR = 'div.artwork > img'
 
   # Downloads each album review on the specified pages and stores them in the database.
   #
@@ -96,6 +100,15 @@ module ScrapeHelper
     Rails.logger.info "Setting album title for '#{review.url}' as '#{review.album_title}'"
   end
 
+  # Downloads album image from review object.
+  #
+  # @param review   Review from which the album image should be extracted.
+  def enrich_review_with_image(review)
+    image_path = get_img_from_review(review, ALBUM_IMAGE_SELECTOR)
+    review.album_image = image_path
+    Rails.logger.info "Setting album image for '#{review.url}' as '#{image_path}'"
+  end
+
   # Gets Spotify metadata for review object.
   #
   # @param review   Review to enrich with Spotify metadata.
@@ -150,11 +163,12 @@ module ScrapeHelper
     if artist_id
       Rails.logger.info "Setting Spotify metadata for '#{review.artist} - #{review.album_title}'"
       review.spotify_artist_id = artist_id
+      review.spotify_album_id = album_id
       review.spotify_artist_popularity = artist_popularity
       review.spotify_album_popularity = album_popularity
       review.spotify_track_ids = track_ids
       review.spotify_genres = genres
-      review.spotify_release_date = release_date
+      review.spotify_release_date = Date.parse(release_date) if release_date and release_date.to_s.strip.length > 4
     else
       Rails.logger.info "Couldn't find spotify Metadata for '#{review.artist} - #{review.album_title}'"
     end
@@ -174,6 +188,29 @@ module ScrapeHelper
     end
 
     text.first.content.strip
+  end
+
+  # Extracts image link value from review using a CSS selector.
+  #
+  # @param review   Review from which the image link should be extracted.
+  # @param selector CSS selector. img src value of first match is returned as a string.
+  def get_img_from_review(review, selector)
+    doc = Nokogiri::HTML(review.html)
+    images = doc.css(selector)
+
+    if images.blank? || images.first.blank? || images.first['src'].blank?
+      Rails.logger.warn "No img match found for selector #{selector}."
+      return nil
+    end
+
+    image_name = generate_album_image_name(review.artist, review.album_title)
+    Rails.logger.warn "Downloading image #{images.first['src']}"
+    extension = File.extname(images.first['src'])
+    open("#{Rails.root}/app/assets/images/album_art/#{image_name}#{extension}", 'wb') do |file|
+      file << open(images.first['src']).read
+    end
+
+    "#{image_name}#{extension}"
   end
 
 end

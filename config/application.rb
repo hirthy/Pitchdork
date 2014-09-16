@@ -75,5 +75,7 @@ module Pitchdork
     # Pitchfork info
     config.album_listing_url = 'http://pitchfork.com/reviews/albums'
     config.pitchfork_root_url = 'http://pitchfork.com'
+
+    config.assets.paths << Rails.root.join("app", "assets", "images", "album_art")
   end
 end
