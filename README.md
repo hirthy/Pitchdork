@@ -19,10 +19,10 @@ The **html** property of the **Review** model is not modified during the extract
 `rake "scrape:find_artists"`
 
 ### Extract album titles
-`rake "scrape:find_album_titles`
+`rake "scrape:find_album_titles"`
 
 ### Download album artwork
-`rake "scrape:find_album_images`
+`rake "scrape:find_album_images"`
 
 Downloads the album artwork from Pitchfork's servers and places it in `/app/assets/images/album_art`. It also sets the image name in the Review object.
 
