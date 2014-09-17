@@ -1,0 +1,30 @@
+#logo-container h1{
+    font-family: 'Open Sans', sans-serif;
+    background: #EEE url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAHklEQVQImWNkYGBgYGD4//8/A5wF5SBYyAr+//8PAPOCFO0Q2zq7AAAAAElFTkSuQmCC) repeat;
+    font-size: 78px;
+    letter-spacing: 5px;
+    text-shadow: 5px -5px black, 4px -4px white;
+    font-weight: bold;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text
+}
+
+#logo-container {
+    background: white;
+}
+
+.seperator {
+    height: 2px;
+    margin-top: 0px;
+    margin-left: 0;
+    margin-right: 0;
+    background-image: radial-gradient(#000000, #FFF), radial-gradient(#000000, #FFF);
+    background-position: 0, 100%, 0, 100%;
+}
+
+.full-wrapper {
+}
+
+#left-column {
+    padding-top: 30px;
+}

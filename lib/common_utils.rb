@@ -4,7 +4,7 @@ module CommonUtils
         :invalid           => :replace,  # Replace invalid byte sequences
         :undef             => :replace,  # Replace anything not defined in ASCII
         :replace           => '',        # Use a blank for those replacements
-        :universal_newline => true       # Always break lines with \n
+        :UNIVERSAL_NEWLINE_DECORATOR => true       # Always break lines with \n
     }
 
     name = "#{artist}_#{album_title}".gsub(/\s/, '_').gsub(/('|"|\/|\\)/, '').downcase

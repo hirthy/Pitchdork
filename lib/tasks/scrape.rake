@@ -52,12 +52,18 @@ namespace :scrape do
   end
 
   task :find_spotify_metadata => :environment do |t, args|
-    Rails.logger.info "Finding the Spotify metadata for all reviews."
-
     success_count = 0
     fail_count = 0
 
-    Review.all.each do |review|
+    if args.has_key?('all') and args.all
+      reviews = Review.all
+      Rails.logger.info "Getting all reviews."
+    else
+      Rails.logger.info "Getting reviews with missing Spotify metadata."
+      reviews = Review.spotify_metadata_missing
+    end
+
+    reviews.each do |review|
       enrich_review_with_spotify_metadata review
 
       if review.spotify_album_id

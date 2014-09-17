@@ -8,7 +8,7 @@ module ScrapeHelper
   include CommonUtils
 
   # Length of wait between album review page scrapes.
-  SLEEP_SECONDS = 7
+  SLEEP_SECONDS = 1
 
   # Don't iterate through more than this many artists matches when searching for matching album.
   MAX_ARTIST_CHECKS = 5

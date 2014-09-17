@@ -23,7 +23,8 @@ class Review
   validates_presence_of :url, :html
 
   # Scopes
-  scope :spotify_metadata_added, where(:url.exists => true)
+  scope :spotify_metadata_added, where(:spotify_album_id.exists => true)
+  scope :spotify_metadata_missing, where(:spotify_album_id.exists => false)
 
   def album_image_path()
     ActionController::Base.helpers.image_path(self.album_image)
