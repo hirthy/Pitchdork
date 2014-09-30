@@ -13,8 +13,10 @@ gem 'nokogiri'
 
 # Misc
 gem 'rspotify', '~> 1.2'
+gem 'lastfm', :git => 'https://github.com/youpy/ruby-lastfm.git'
 gem 'text'
-#gem 'angularjs-rails'
+gem 'figaro'
+gem 'elasticsearch'
 
 # Gems used only for assets and not required
 # in production environments by default.

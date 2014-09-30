@@ -3,7 +3,9 @@ class Review
 
   field :url, type: String
   field :html, type: String
+  field :body, type: String
   field :artist, type: String
+  field :reviewer_name, type: String
   field :album_title, type: String
   field :album_image, type: String
   field :score, type: Float
@@ -17,6 +19,9 @@ class Review
   field :spotify_track_ids, type: Array
   field :spotify_genres, type: Array
 
+  # Last.fm Metadata
+  field :last_fm_tags, type: Array
+
   attr_reader :album_image_path
 
   validates_uniqueness_of :url
@@ -25,6 +30,8 @@ class Review
   # Scopes
   scope :spotify_metadata_added, where(:spotify_album_id.exists => true)
   scope :spotify_metadata_missing, where(:spotify_album_id.exists => false)
+  scope :last_fm_tags_missing, where(:last_fm_tags.exists => false)
+  scope :genre_missing, where(:genres.exists => false)
 
   def album_image_path()
     ActionController::Base.helpers.image_path(self.album_image)

@@ -5,18 +5,23 @@
 
 var pitchdork = angular.module('pitchdork',[]);
 
-pitchdork.controller('SearchController', ['$scope', '$http', function($scope, $http) {
- $http({ method: 'GET', url: '/api/v1/reviews/' }).
-    success(function (data, status, headers, config) {
-        console.log('success');
-        console.log(data);
-    }).
-    error(function (data, status, headers, config) {
-        console.log('failure');
-        console.log(data);
-    });
-
-    $scope.greeting = 'hello!';
+pitchdork.service('searchService', ['$http', function($http){
+    this.search = function(text){
+        return $http({ method: 'GET', url: '/api/v1/reviews/', params: {q: text} })
+    };
 }]);
+
+pitchdork.controller('SearchController', ['$scope', 'searchService', function($scope, searchService) {
+    $scope.searchClick = function() {
+        var result = searchService.search($scope.searchText);
+        result.then(function(response) {
+            $scope.results = response.data
+            console.log(response);
+        }, function(reason) {
+            console.log('fail: ' + reason);
+        });
+    };
+}]);
+
 
 

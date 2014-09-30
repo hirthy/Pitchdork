@@ -1,13 +1,26 @@
-<div class="rows full-wrapper" ng-controller="SearchController">
-  <div id="left-column" class="col-md-3">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Genres</h3>
-      </div>
-      <div class="panel-body">
-        Panel content
+<div class="rows full-wrapper search-wrapper" ng-controller="SearchController">
+  <div id="left-column" class="col-md-2">
+    <!--<div class="panel panel-default">-->
+      <!--<div class="panel-heading">-->
+        <!--<h3 class="panel-title">Genres</h3>-->
+      <!--</div>-->
+      <!--<div class="panel-body">-->
+        <!--Panel content-->
+      <!--</div>-->
+    <!--</div>-->
+  </div>
+  <div class="search-wrapper col-md-8">
+    <div class="input-group search-input-group input-group-lg">
+      <input type="text" ng-model="searchText" ng-keyup="$event.keyCode == 13 && searchClick()" class="form-control">
+      <span class="input-group-btn">
+        <button ng-click="searchClick()" class="btn btn-default" type="button">Search</button>
+      </span>
+    </div><!-- /input-group -->
+    <div class="row" ng-repeat="item in results">
+      <div class="col-md-12 search-result">
+          <h3><span class="artist"><a href="{{ item.url }}">{{ item.artist }} - {{ item.album_title }}</a></span> <span class="score">{{ item.score }}</span></h3>
+          <span class="review-snippet"> {{ item.body.substring(0,500).trim() + '...'}} </span>
       </div>
     </div>
   </div>
-  <div class="col-md-8"></div>
 </div>

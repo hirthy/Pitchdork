@@ -29,7 +29,7 @@ module Pitchdork
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    # config.autoload_paths += %W(#{config.root}/extras)
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -77,5 +77,8 @@ module Pitchdork
     config.pitchfork_root_url = 'http://pitchfork.com'
 
     config.assets.paths << Rails.root.join("app", "assets", "images", "album_art")
+
+    # Spotify
+    RSpotify::authenticate(ENV['spotify_client_id'], ENV['spotify_secret'])
   end
 end

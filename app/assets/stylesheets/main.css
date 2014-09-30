@@ -23,8 +23,34 @@
 }
 
 .full-wrapper {
+    margin-bottom: 40px;
 }
 
 #left-column {
     padding-top: 30px;
+}
+
+.search-input-group {
+    margin-top: 10px;
+}
+
+.search-input-group input {
+}
+
+.review-snippet {
+    color: grey;
+}
+
+.search-result span.artist {
+    text-decoration: underline;
+}
+
+.search-wrapper {
+    margin-bottom: 80px; /* the bottom margin is the negative value of the footer's height */
+}
+
+.footer {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #F2F2F2;
 }

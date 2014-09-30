@@ -20,3 +20,6 @@ pickle-email-*.html
 .project
 .*
 !/.gitignore
+
+# Ignore application configuration
+/config/application.yml

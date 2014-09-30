@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/youpy/ruby-lastfm.git
+  revision: 66eb767605f8688fa47ff7f4289dc9e4d709186d
+  specs:
+    lastfm (1.25.0)
+      activesupport (>= 3.2.0)
+      httparty
+      xml-simple
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -31,6 +40,14 @@ GEM
     arel (3.0.2)
     builder (3.0.4)
     diff-lcs (1.2.4)
+    elasticsearch (1.0.5)
+      elasticsearch-api (= 1.0.5)
+      elasticsearch-transport (= 1.0.5)
+    elasticsearch-api (1.0.5)
+      multi_json
+    elasticsearch-transport (1.0.5)
+      faraday
+      multi_json
     erubis (2.7.0)
     execjs (2.2.1)
     factory_girl (4.2.0)
@@ -40,8 +57,13 @@ GEM
       railties (>= 3.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
+    figaro (1.0.0)
+      thor (~> 0.14)
     hashie (3.3.1)
     hike (1.2.2)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     i18n (0.6.1)
     journey (1.0.4)
     json (1.7.7)
@@ -134,12 +156,16 @@ GEM
     uglifier (2.2.1)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
+    xml-simple (1.1.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  elasticsearch
   factory_girl_rails
+  figaro
+  lastfm!
   mongoid (~> 3.1)
   nokogiri
   rails (~> 3.2)

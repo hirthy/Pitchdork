@@ -1,4 +1,4 @@
-require "#{Rails.root}/app/helpers/scrape_helper"
+require "#{Rails.root}/lib/tasks/scrape_helper"
 require "text"
 include ScrapeHelper
 
@@ -33,6 +33,28 @@ namespace :scrape do
     Rails.logger.info "Done"
   end
 
+  task :find_body => :environment do |t, args|
+    Rails.logger.info "Finding the body for all Reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_body review
+      review.save
+    end
+
+    Rails.logger.info "Done"
+  end
+
+  task :find_reviewers => :environment do |t, args|
+    Rails.logger.info "Finding the reviewers for all Reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_reviewer_name review
+      review.save
+    end
+
+    Rails.logger.info "Done"
+  end
+
   task :find_album_titles => :environment do |t, args|
     Rails.logger.info "Finding the album titles for all Reviews."
 
@@ -50,34 +72,5 @@ namespace :scrape do
       review.save
     end
   end
-
-  task :find_spotify_metadata => :environment do |t, args|
-    success_count = 0
-    fail_count = 0
-
-    if args.has_key?('all') and args.all
-      reviews = Review.all
-      Rails.logger.info "Getting all reviews."
-    else
-      Rails.logger.info "Getting reviews with missing Spotify metadata."
-      reviews = Review.spotify_metadata_missing
-    end
-
-    reviews.each do |review|
-      enrich_review_with_spotify_metadata review
-
-      if review.spotify_album_id
-        review.save
-        success_count += 1
-      else
-        fail_count += 1
-      end
-    end
-
-    Rails.logger.info "Found Spotify Metadata for #{success_count} reviews, failed for #{fail_count}."
-    Rails.logger.info "Done."
-  end
-
-
 
 end

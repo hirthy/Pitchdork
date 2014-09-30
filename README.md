@@ -18,6 +18,9 @@ The **html** property of the **Review** model is not modified during the extract
 ### Extract artists
 `rake "scrape:find_artists"`
 
+### Extract reviewer names
+`rake "scrape:find_reviewers"`
+
 ### Extract album titles
 `rake "scrape:find_album_titles"`
 
