@@ -44,6 +44,17 @@ namespace :scrape do
     Rails.logger.info "Done"
   end
 
+  task :find_publish_date => :environment do |t, args|
+    Rails.logger.info "Finding the publish date for all Reviews."
+
+    Review.all.each do |review|
+      enrich_review_with_publish_date review
+      review.save
+    end
+
+    Rails.logger.info "Done"
+  end
+
   task :find_reviewers => :environment do |t, args|
     Rails.logger.info "Finding the reviewers for all Reviews."
 

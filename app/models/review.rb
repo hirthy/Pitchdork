@@ -9,6 +9,7 @@ class Review
   field :album_title, type: String
   field :album_image, type: String
   field :score, type: Float
+  field :publish_date, type: Date
 
   # Spotify Metadata
   field :spotify_artist_id, type: String

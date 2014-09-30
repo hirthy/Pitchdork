@@ -56,6 +56,7 @@ module IndexHelper
                                             reviewer_name: {type: 'string', analyzer: 'just_lowercase', store: 'true'},
                                             album_title: {type: 'string', analyzer: 'just_lowercase', store: 'true'},
                                             score: {type: 'integer', store: 'true'},
+                                            publish_date: {type: 'date', store: 'true'},
                                             spotify_artist_id: {type: 'string', index: 'not_analyzed', store: 'true'},
                                             spotify_artist_popularity: {type: 'integer', store: 'true'},
                                             spotify_album_popularity: {type: 'integer', store: 'true'},

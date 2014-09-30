@@ -21,6 +21,7 @@ module ScrapeHelper
   SCORE_SELECTOR = 'span.score'
   ARTIST_SELECTOR = 'h1'
   REVIEWER_NAME_SELECTOR = 'h4 > a'
+  PUBLISH_DATE_SELECTOR = 'span.pub-date'
   ALBUM_TITLE_SELECTOR = 'h2'
   ALBUM_IMAGE_SELECTOR = 'div.artwork > img'
   BODY_SELECTOR = 'div.editorial'
@@ -115,6 +116,15 @@ module ScrapeHelper
   def enrich_review_with_reviewer_name(review)
     review.reviewer_name = get_text_from_review(review, REVIEWER_NAME_SELECTOR)
     Rails.logger.info "Setting reviewer name for '#{review.url}' as '#{review.reviewer_name}'"
+  end
+
+  # Gets publish date from review object.
+  #
+  # @param review   Review from which the publish date should be extracted.
+  def enrich_review_with_publish_date(review)
+    publish_date_text = get_text_from_review(review, PUBLISH_DATE_SELECTOR)
+    review.publish_date = Date.parse(publish_date_text) unless publish_date_text.nil?
+    Rails.logger.info "Setting publish date for '#{review.url}' as '#{review.publish_date}'"
   end
 
 
