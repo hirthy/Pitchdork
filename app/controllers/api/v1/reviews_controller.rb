@@ -7,16 +7,41 @@ module Api::V1
     # GET /v1/reviews
     def index
       params = request.query_parameters
-      result = @@client.search index: 'reviews', body: {
+      query = '*:*'
+      query = params['q'] if !params['q'].nil? and !params['q'].empty? and !(params['q'].strip || params['q']).empty?
+      filters = params['filters'] if params.has_key?('filters')
+
+      body = {
           query: {
               query_string: {
                   fields: ['body', 'artist^4', 'album_title^4'],
-                  query: params['q']
+                  query: query
+              }
+          },
+          facets: {
+              last_fm_tags: {
+                  terms: {
+                      field: 'last_fm_tags',
+                      size: 500
+                  }
               }
           }
       }
 
+      # if !filters.nil? and filters.length > 0
+      #   for
+      #   body[:filter] = {
+      #
+      #   }
+      # end
+
+      result = @@client.search index: 'reviews', body: body
+
+
+
       hits = result['hits']['hits'] if result['hits'].has_key? 'hits' else []
+      tags = result['facets']['last_fm_tags']['terms']
+
       results = []
       hits.each do |hit|
         result = hit['_source']
@@ -26,7 +51,7 @@ module Api::V1
         results.append(result)
       end
 
-      render json: results
+      render json: {hits: results, facets: {Tags: tags}}
     end
 
   end

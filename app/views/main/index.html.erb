@@ -1,14 +1,21 @@
-<div class="rows full-wrapper search-wrapper" ng-controller="SearchController">
+<div class="rows full-wrapper search-wrapper" ng-controller="SearchController" data-ng-init="searchClick()">
+
   <div id="left-column" class="col-md-2">
-    <!--<div class="panel panel-default">-->
-      <!--<div class="panel-heading">-->
-        <!--<h3 class="panel-title">Genres</h3>-->
-      <!--</div>-->
-      <!--<div class="panel-body">-->
-        <!--Panel content-->
-      <!--</div>-->
-    <!--</div>-->
+    <div class="panel panel-default" ng-repeat="(facetName, facets) in facets">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ facetName }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="checkbox" ng-repeat="facet in facets | limitTo:5">
+          <label>
+            <input type="checkbox" ng-model="facet.checked"> {{ facet.term }} ({{ facet.count }})
+          </label>
+        </div>
+        <div ng-show="facets.length > 5" ><a href="#" ng-click="open(facetName)">Show more</a></div>
+      </div>
+    </div>
   </div>
+
   <div class="search-wrapper col-md-8">
     <div class="input-group search-input-group input-group-lg">
       <input type="text" ng-model="searchText" ng-keyup="$event.keyCode == 13 && searchClick()" class="form-control">
@@ -24,3 +31,24 @@
     </div>
   </div>
 </div>
+
+<script type="text/ng-template" id="facetModal.html">
+  <div class="modal-header">
+    <h3 class="modal-title">{{ facetName }}</h3>
+  </div>
+  <div class="modal-body facet-modal-body">
+    <div class="container-fluid facet-checkbox-list">
+        <div class="row">
+            <div class="checkbox col-md-3" ng-repeat="facet in facets[modalFacetKey]">
+              <label>
+                <input type="checkbox" ng-model="facet.checked"> {{ facet.term }} ({{ facet.count }})
+              </label>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="close()">Search</button>
+    <a href="#" ng-click="cancel()">Cancel</a>
+  </div>
+</script>

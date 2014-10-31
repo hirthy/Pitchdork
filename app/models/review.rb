@@ -19,6 +19,7 @@ class Review
   field :spotify_release_date, type: Date
   field :spotify_track_ids, type: Array
   field :spotify_genres, type: Array
+  field :spotify_last_check, :type => DateTime
 
   # Last.fm Metadata
   field :last_fm_tags, type: Array
@@ -30,7 +31,7 @@ class Review
 
   # Scopes
   scope :spotify_metadata_added, where(:spotify_album_id.exists => true)
-  scope :spotify_metadata_missing, where(:spotify_album_id.exists => false)
+  scope :spotify_metadata_missing, where(:spotify_album_id.exists => false, :spotify_last_check.exists => false)
   scope :last_fm_tags_missing, where(:last_fm_tags.exists => false)
   scope :genre_missing, where(:genres.exists => false)
 

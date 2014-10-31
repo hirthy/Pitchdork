@@ -12,5 +12,5 @@
 //
 //= require angular
 //= require jquery-1.11.1
-//= require bootstrap.min
+//= require ui-bootstrap-tpls-0.11.2
 //= require_tree .

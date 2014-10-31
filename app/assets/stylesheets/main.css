@@ -1,3 +1,9 @@
+/*
+**********************************************
+Logo
+**********************************************
+*/
+
 #logo-container h1{
     font-family: 'Open Sans', sans-serif;
     background: #EEE url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAHklEQVQImWNkYGBgYGD4//8/A5wF5SBYyAr+//8PAPOCFO0Q2zq7AAAAAElFTkSuQmCC) repeat;
@@ -13,12 +19,18 @@
     background: white;
 }
 
+/*
+**********************************************
+Search UI
+**********************************************
+*/
+
 .seperator {
     height: 2px;
     margin-top: 0px;
     margin-left: 0;
     margin-right: 0;
-    background-image: radial-gradient(#000000, #FFF), radial-gradient(#000000, #FFF);
+    background-image: radial-gradient(#000000, #F2F2F2), radial-gradient(#000000, #F2F2F2);
     background-position: 0, 100%, 0, 100%;
 }
 
@@ -27,7 +39,11 @@
 }
 
 #left-column {
-    padding-top: 30px;
+    padding-top: 80px;
+    min-width: 215px;
+}
+
+#left-column .panel {
 }
 
 .search-input-group {
@@ -50,7 +66,41 @@
 }
 
 .footer {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     background-color: #F2F2F2;
+    min-height: 20px;
+}
+
+.panel-body {
+    padding-top: 0px;
+}
+
+
+/*
+**********************************************
+Modal Dialog
+**********************************************
+*/
+
+.modal-body .facet-checkbox-list .checkbox:first-child {
+    margin-top: -5px;
+}
+
+.modal-dialog {
+    width: 1000px;
+}
+
+.modal-dialog .facet-checkbox-list {
+    height: 400px;
+    overflow: auto;
+}
+
+.facet-modal-body {
+    padding-top: 10px;
+    margin-top: 0px;
+}
+
+.facet-modal-body .row {
+    margin-top: 10px;
 }

@@ -33,7 +33,20 @@ module MetadataHelper
   #
   # @param review   Review to enrich with Spotify metadata.
   def add_spotify_metadata(review)
-    artist_matches = RSpotify::Artist.search("#{review.artist}")
+    if review.artist.nil?
+      Rails.logger.error("Review with URL #{review.url} has no artist property set.")
+      return review
+    end
+
+    artist_name = review.artist.gsub(/\//, '').downcase
+
+    if review.album_title != 'EP'
+      album_title = review.album_title.gsub(/\bEP\b/, '').downcase
+    else
+      album_title = review.album_title.downcase
+    end
+
+    artist_matches = RSpotify::Artist.search(artist_name)
 
     artist_id = nil
     artist_popularity = nil
@@ -48,7 +61,7 @@ module MetadataHelper
 
       # First try by artist.
       artist.albums.each do |album|
-        if Text::Levenshtein.distance(album.name.downcase, review.album_title.downcase) < 8
+        if Text::WhiteSimilarity.similarity(album.name.downcase, album_title) > 0.65
           artist_id = artist.id
           album_id = album.id
           artist_popularity = artist.popularity
@@ -62,11 +75,11 @@ module MetadataHelper
 
       # Try album endpoint if no match by artist.
       if not album_id
-        album_matches = RSpotify::Album.search("#{review.album_title}")
+        album_matches = RSpotify::Album.search(album_title)
 
         album_matches.each_with_index do |album, index|
           break if index == MAX_ALBUM_CHECKS
-          if Text::Levenshtein.distance(album.artists[0].name, review.artist) < 5
+          if Text::WhiteSimilarity.similarity(album.artists[0].name, artist_name) > 0.65
             artist_id = artist.id
             album_id = album.id
             artist_popularity = artist.popularity
@@ -81,17 +94,25 @@ module MetadataHelper
     end
 
     if artist_id
-      Rails.logger.info "Setting Spotify metadata for '#{review.artist} - #{review.album_title}'"
+      Rails.logger.info "Setting Spotify metadata for '#{artist_name} - #{album_title}'"
       review.spotify_artist_id = artist_id
       review.spotify_album_id = album_id
       review.spotify_artist_popularity = artist_popularity
       review.spotify_album_popularity = album_popularity
       review.spotify_track_ids = track_ids
       review.spotify_genres = genres
-      review.spotify_release_date = Date.parse(release_date) if release_date and release_date.to_s.strip.length > 4
+
+      begin
+        review.spotify_release_date = Date.parse(release_date) if release_date and release_date.to_s.strip.length > 4
+      rescue Exception
+        Rails.logger.info "Couldn't parse date #{release_date}"
+      end
     else
       Rails.logger.info "Couldn't find spotify Metadata for '#{review.artist} - #{review.album_title}'"
     end
+
+    review.spotify_last_check = DateTime.now
   end
+
 end
 

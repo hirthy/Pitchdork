@@ -28,15 +28,19 @@ namespace :metadata do
       reviews = Review.spotify_metadata_missing
     end
 
+    # review = Review.where(album_title: "Let Us Never Speak of It Again").first
+    # add_spotify_metadata(review)
+
     reviews.no_timeout.each do |review|
       add_spotify_metadata review
 
       if review.spotify_album_id
-        review.save
         success_count += 1
       else
         fail_count += 1
       end
+
+      review.save
 
       sleep(0.5)
     end
