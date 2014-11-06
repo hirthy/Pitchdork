@@ -4,10 +4,12 @@ include MetadataHelper
 
 namespace :metadata do
 
+  desc "Generate last.fm authorize link"
   task :authorize_lastfm => :environment do |t, args|
     get_validation_url
   end
 
+  desc "Add last.fm authorize link"
   task :add_last_fm_metadata => :environment do |t, args|
     Review.all.no_timeout.each do |review|
       add_last_fm_metadata review
@@ -16,6 +18,7 @@ namespace :metadata do
     end
   end
 
+  desc "Add spotify metadata."
   task :add_spotify_metadata => :environment do |t, args|
     success_count = 0
     fail_count = 0
@@ -27,9 +30,6 @@ namespace :metadata do
       Rails.logger.info "Getting reviews with missing Spotify metadata."
       reviews = Review.spotify_metadata_missing
     end
-
-    # review = Review.where(album_title: "Let Us Never Speak of It Again").first
-    # add_spotify_metadata(review)
 
     reviews.no_timeout.each do |review|
       add_spotify_metadata review

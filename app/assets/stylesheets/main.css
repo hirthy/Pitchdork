@@ -40,10 +40,7 @@ Search UI
 
 #left-column {
     padding-top: 80px;
-    min-width: 215px;
-}
-
-#left-column .panel {
+    min-width: 240px;
 }
 
 .search-input-group {
@@ -61,6 +58,10 @@ Search UI
     text-decoration: underline;
 }
 
+.no-results-message {
+    color: grey;
+}
+
 .search-wrapper {
     margin-bottom: 80px; /* the bottom margin is the negative value of the footer's height */
 }
@@ -73,7 +74,7 @@ Search UI
 }
 
 .panel-body {
-    padding-top: 0px;
+    padding-top: 0;
 }
 
 

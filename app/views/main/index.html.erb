@@ -1,7 +1,7 @@
 <div class="rows full-wrapper search-wrapper" ng-controller="SearchController" data-ng-init="searchClick()">
 
   <div id="left-column" class="col-md-2">
-    <div class="panel panel-default" ng-repeat="(facetName, facets) in facets">
+    <div class="panel panel-default" ng-repeat="(facetName, facets) in facets" ng-show="facets.length > 0">
       <div class="panel-heading">
         <h3 class="panel-title">{{ facetName }}</h3>
       </div>
@@ -25,8 +25,16 @@
     </div><!-- /input-group -->
     <div class="row" ng-repeat="item in results">
       <div class="col-md-12 search-result">
-          <h3><span class="artist"><a href="{{ item.url }}">{{ item.artist }} - {{ item.album_title }}</a></span> <span class="score">{{ item.score }}</span></h3>
+          <h3>
+            <span class="artist"><a href="{{ item.url }}">{{ item.artist }} - {{ item.album_title }}</a></span>
+            <span class="score">{{ item.score }}</span>
+          </h3>
           <span class="review-snippet"> {{ item.body.substring(0,500).trim() + '...'}} </span>
+      </div>
+    </div>
+    <div class="row" ng-show="results.length == 0">
+      <div class="col-md-12 no-results-message">
+        <h3>Dang! Couldn't find any matches.</h3>
       </div>
     </div>
   </div>

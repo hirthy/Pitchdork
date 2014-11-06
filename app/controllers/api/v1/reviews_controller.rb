@@ -1,46 +1,28 @@
 module Api::V1
   class ReviewsController < ApiController
-    include CommonUtils
+    include CommonUtils, SearchHelper
 
     @@client = Elasticsearch::Client.new url: ENV['es_url']
 
     # GET /v1/reviews
     def index
       params = request.query_parameters
-      query = '*:*'
-      query = params['q'] if !params['q'].nil? and !params['q'].empty? and !(params['q'].strip || params['q']).empty?
-      filters = params['filters'] if params.has_key?('filters')
+      query_string = '*:*'
+      query_string = params['q'] if !params['q'].nil? and !params['q'].empty? and !(params['q'].strip || params['q']).empty?
+      filters = if params.has_key?('filter') then JSON.parse(params['filter']) else {} end
 
-      body = {
-          query: {
-              query_string: {
-                  fields: ['body', 'artist^4', 'album_title^4'],
-                  query: query
-              }
-          },
-          facets: {
-              last_fm_tags: {
-                  terms: {
-                      field: 'last_fm_tags',
-                      size: 500
-                  }
-              }
-          }
-      }
-
-      # if !filters.nil? and filters.length > 0
-      #   for
-      #   body[:filter] = {
-      #
-      #   }
-      # end
-
-      result = @@client.search index: 'reviews', body: body
+      query = generate_query(query_string, filters)
+      result = @@client.search index: 'reviews', body: query
 
 
+      tags = []
+      reviewers = []
+      hits = if result['hits'].has_key? 'hits' then result['hits']['hits'] else [] end
 
-      hits = result['hits']['hits'] if result['hits'].has_key? 'hits' else []
-      tags = result['facets']['last_fm_tags']['terms']
+      if hits.length > 1
+        reviewers = result['facets']['reviewer_name']['terms']
+        tags = result['facets']['last_fm_tags']['terms']
+      end
 
       results = []
       hits.each do |hit|
@@ -51,8 +33,7 @@ module Api::V1
         results.append(result)
       end
 
-      render json: {hits: results, facets: {Tags: tags}}
+      render json: {hits: results, facets: {Tags: tags, Reviewers: reviewers}}
     end
-
   end
 end
