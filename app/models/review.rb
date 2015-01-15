@@ -24,6 +24,9 @@ class Review
   # Last.fm Metadata
   field :last_fm_tags, type: Array
 
+  # Echonest Metadata
+  field :genre, type: String
+
   attr_reader :album_image_path
 
   validates_uniqueness_of :url
@@ -33,7 +36,9 @@ class Review
   scope :spotify_metadata_added, where(:spotify_album_id.exists => true)
   scope :spotify_metadata_missing, where(:spotify_album_id.exists => false, :spotify_last_check.exists => false)
   scope :last_fm_tags_missing, where(:last_fm_tags.exists => false)
-  scope :genre_missing, where(:genres.exists => false)
+  scope :genre_missing, where(:genre.exists => false)
+
+  index({ publish_date: 1 })
 
   def album_image_path()
     ActionController::Base.helpers.image_path(self.album_image)

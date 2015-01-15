@@ -7,6 +7,62 @@ module MetadataHelper
 
   @@lastfm = Lastfm.new(ENV['last_fm_key'], ENV['last_fm_secret'])
 
+  def add_echonest_metadata(review)
+    if !review.artist || (review.artist.downcase.include? 'various artists')
+      return nil
+    end
+    
+    if review.artist.nil?
+      Rails.logger.error("Review with URL #{review.url} has no artist property set.")
+      return review
+    end
+
+    artist_name = review.artist.gsub(/\//, '').downcase
+
+    artist = Echonest::Artist.new(ENV['echonest_key'])
+    params = { name: artist_name  }
+    max_tries = 5
+    begin
+      artist_search = artist.search(params)
+    rescue Echonest::Error => e
+      Rails.logger.info "Something happened with echonest, error: #{e}"
+      if max_tries > 0
+        max_tries -= 1
+        sleep(60)
+        retry
+      end
+      Rails.logger.info "Giving up on finding artist for #{artist_name}"
+    else
+      if artist_search.length > 0
+        first_artist = artist_search[0]
+        begin
+          artist_terms = first_artist.terms #this is another API hit
+        rescue Echonest::Error => e
+          Rails.logger.info "Something happened with echonest, error: #{e}"
+          if max_tries > 0
+            max_tries -= 1
+            sleep(60)
+            retry
+          end
+          Rails.logger.info "Giving up on finding terms for #{artist_name}"
+        else
+          if artist_terms.length > 0
+            genre = artist_terms[0][:name]
+            review.genre = genre
+            Rails.logger.info "Setting Echonest genre for #{artist_name} - #{genre}"
+          else 
+            Rails.logger.info "No terms found for #{artist_name}"
+            return nil
+          end
+        end
+      else
+        Rails.logger.info "No artists found for #{artist_name}"
+        return nil
+      end
+    end
+  end
+
+
   def add_last_fm_metadata(review)
     if !review.artist || (review.artist.downcase.include? 'various artists')
       return nil

@@ -17,6 +17,10 @@ gem 'lastfm', :git => 'https://github.com/youpy/ruby-lastfm.git'
 gem 'text'
 gem 'figaro'
 gem 'elasticsearch'
+gem 'dcjs-rails'
+gem 'crossfilter-rails'
+gem 'd3-rails'
+gem 'echonest-ruby-api'
 
 # Gems used only for assets and not required
 # in production environments by default.

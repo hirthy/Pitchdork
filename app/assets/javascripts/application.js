@@ -13,4 +13,9 @@
 //= require angular
 //= require jquery-1.11.1
 //= require ui-bootstrap-tpls-0.11.2
-//= require_tree .
+//= require d3
+//= require crossfilter
+//= require dc
+//= require spin
+//= require angular-spinner
+//= require colorbrewer

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-      <title>Pitchdork</title>
+      <title></title>
       <%= stylesheet_link_tag    "application", :media => "all" %>
       <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
       <%= javascript_include_tag "application" %>
@@ -9,18 +9,11 @@
       <%= csrf_meta_tags %>
     </head>
     <body ng-app="pitchdork">
-        <nav class="nav navbar-default text-center" role="navigation">
-          <div id="logo-container" class="container-fluid">
-            <h1>Pitchdork</h1>
-            <div class="seperator"></div>
-          </div>
-        </nav>
-        <%= yield %>
-        <div class="push"></div>
-        <div class="navbar navbar-fixed-bottom footer">
-          <div class="container">
-            <div class="text-center">By <a href="http://hellokev.in">Kevin</a></div>
-          </div>
+      <div class="container">
+        <div class="page-header">
+          <h1>Music Metrics</h1>
         </div>
+        <%= yield %>
+      </div>
     </body>
 </html>

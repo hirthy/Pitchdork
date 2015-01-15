@@ -75,7 +75,65 @@ module IndexHelper
       Rails.logger.info("Adding #{review.artist} - #{review.album_title}")
       review = review.as_json
       review['image_path']
+      review = review.as_json
       @@client.index index: index_name, type: 'review', id: id, body: review.as_json
+    end
+  end
+
+  def create_artist_index
+    index_name = "artist"
+
+    @@client.indices.create :index => index_name,
+                            body: {
+                                settings: {
+                                    index: { number_of_replicas: 0},
+                                    analysis: {
+                                        analyzer: {
+                                            just_lowercase: {
+                                                type: 'custom',
+                                                filter: ['lowercase'],
+                                                tokenizer: 'keyword'
+                                            },
+                                            shingled: {
+                                                type: 'custom',
+                                                filter: ['standard', 'lowercase', 'filter_shingle'],
+                                                tokenizer: 'standard'
+                                            },
+                                            html_analyzer: {
+                                                type: 'custom',
+                                                tokenizer: 'standard',
+                                                filter: ['standard', 'lowercase', 'stop', 'snowball'],
+                                                char_filter: ['html_strip']
+                                            },
+                                            uax_url_email: {
+                                                type: 'custom',
+                                                tokenizer: 'uax_url_email'
+                                            }
+                                        },
+                                        filter: {
+                                            filter_shingle: {
+                                                type: 'shingle',
+                                                max_shingle_size: 3,
+                                                min_shingle_size: 2,
+                                                output_unigrams: 'false',
+                                            }
+                                        }
+                                    }
+                                },
+                                mappings: {
+                                    artist: {
+                                        properties: {
+                                            artist: {type: 'string', analyzer: 'standard', store: 'true'}
+                                        }
+                                    }
+                                }
+                            }
+
+    Review.distinct(:artist).each_with_index do |artist,i|
+      id = i.to_s
+      Rails.logger.info("Adding #{artist}")
+      body = {:artist => artist}
+      @@client.index index: index_name, type: 'artist', id: id, body: body.to_json
     end
   end
 end
