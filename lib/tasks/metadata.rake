@@ -4,6 +4,15 @@ include MetadataHelper
 
 namespace :metadata do
 
+  desc "Add echonest metadata"
+  task :add_echonest_metadata => :environment do |t, args|
+    Review.genre_missing.no_timeout.each do |review|
+      add_echonest_metadata review
+      review.save
+      sleep(2)
+    end
+  end
+
   desc "Generate last.fm authorize link"
   task :authorize_lastfm => :environment do |t, args|
     get_validation_url
