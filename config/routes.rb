@@ -3,6 +3,7 @@ Pitchdork::Application.routes.draw do
     namespace :v1 do
 
       resources :reviews, :only => [:index, :show]
+      resources :artists, :only => [:index, :show]
 
     end
   end

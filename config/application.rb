@@ -79,6 +79,6 @@ module Pitchdork
     config.assets.paths << Rails.root.join("app", "assets", "images", "album_art")
 
     # Spotify
-    RSpotify::authenticate(ENV['spotify_client_id'], ENV['spotify_secret'])
+    # RSpotify::authenticate(ENV['spotify_client_id'], ENV['spotify_secret'])
   end
 end

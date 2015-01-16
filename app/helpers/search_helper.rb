@@ -30,37 +30,13 @@ module SearchHelper
     util = SearchUtil.new
 
     query = {
-        filtered: {
-            query: {
-                query_string: {
-                    query: query_string,
-                    fields: ['body', 'artist^4', 'album_title^4']
-                }
-            },
-            filter: {}
+      query: {
+        match: {
+          artist: query_string
         }
+      }
     }
 
-    body = {
-        facets: {
-            last_fm_tags: {
-                terms: {
-                    field: 'last_fm_tags',
-                    size: 500
-                }
-            },
-            reviewer_name: {
-                terms: {
-                    field: 'reviewer_name',
-                    size: 500
-                }
-            },
-        }
-    }
-
-    filters = util.get_filters(filters)
-    query[:filtered][:filter] = filters unless filters.nil?
-    body[:query] = query
-    body
+    query
   end
 end

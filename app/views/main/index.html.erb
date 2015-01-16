@@ -17,6 +17,13 @@
           </li>
         </ul>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="text-right" style="margin-top:10px;">
+            <a ng-href="#allartists" ng-click="searchText = '';statsPull();">All Artists</a>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
   <span us-spinner="{radius:30, width:8, length: 16}"></span>
@@ -44,7 +51,7 @@
         <strong>Score Distribution</strong>
         <div id="dist-chart"></div>
         <p class="text-right">
-          <a ng-href="#reset" ng-click="dc.filterAll();dc.renderAll();statsPull();searchText = ''">Reset All</a>
+          <a ng-href="#reset" ng-click="resetAll()">Reset All</a>
         </p>
       </div>
     </div>

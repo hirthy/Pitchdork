@@ -12,11 +12,11 @@ pitchdork.service('searchService', ['$http', function($http){
      * @param checkedFacets - Facets to filter by.
      */
     this.search = function(text, checkedFacets){
-        return $http({ method: 'GET', url: '/api/v1/reviews/', params: {q: text, filter: checkedFacets} })
+        return $http({ method: 'GET', url: '/api/v1/artists/', params: {q: text, filter: checkedFacets} })
     };
 
-    this.stats = function(artist){
-        return $http({ cache: true, method: 'GET', url: '/api/v1/stats/', params: {artist: artist} })
+    this.reviews = function(artist){
+        return $http({ cache: true, method: 'GET', url: '/api/v1/reviews/', params: {artist: artist} })
     };
 }]);
 
@@ -24,7 +24,7 @@ pitchdork.directive('usSpinner', ['$http', '$rootScope' ,function ($http, $rootS
     return {
       link: function (scope, elm, attrs) {
                 elm.removeClass('ng-hide');
-                scope.$on("Data_Ready", function () {
+                scope.$on('Data_Ready', function () {
                     elm.addClass('ng-hide');
                 });
             }
@@ -35,7 +35,7 @@ pitchdork.directive('metrics', ['$http', '$rootScope' ,function ($http, $rootSco
     return {
       link: function (scope, elm, attrs) {
                 elm.addClass('ng-hide');
-                scope.$on("Data_Ready", function () {
+                scope.$on('Data_Ready', function () {
                     elm.removeClass('ng-hide');
                 });
             }
@@ -123,6 +123,14 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
     };
 
     /**
+     * Resets and redraws all charts.
+     */
+    $scope.resetAll = function() {
+        dc.filterAll();
+        dc.renderAll();
+    };
+
+    /**
      * Opens Facet dialog, saves away current facet checked states in case the dialog is dismissed.
      * @param facetName - Name of facet the user is opening a dialog for.
      */
@@ -165,11 +173,10 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
     };
 
     $scope.statsPull = function(artist) {
-        $scope.initial = true;
         reviewData = [];
         if (typeof artist !== 'undefined') {
             $scope.artist = artist;
-            var result = searchService.stats(artist);
+            var result = searchService.reviews(artist);
             result.then(function(response) {
                 $scope.createCharts(response.data, artist);
             }, function(reason) {
@@ -177,11 +184,12 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             });
         } else {
             $scope.artist = 'All Artists';
-            d3.json('reviews.json', function(error, data) {
-                if (error) return console.warn(error);
-                $scope.createCharts(data, artist);
-                $scope.initial = false;
-                $scope.$broadcast("Data_Ready");
+            var result = searchService.reviews();
+            result.then(function(response) {
+                $scope.createCharts(response.data, artist);
+                $scope.$broadcast('Data_Ready');
+            }, function(reason) {
+                console.log('fail: ' + reason);
             });
         }
     };
