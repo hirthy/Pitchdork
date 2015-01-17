@@ -1,7 +1,7 @@
 module IndexHelper
   require 'elasticsearch'
 
-  @@client = Elasticsearch::Client.new url: ENV['es_url']
+  @@client = Elasticsearch::Client.new url: ENV['BONSAI_URL']
 
   def create_index
     index_name = "#{ENV['es_index']}-#{Time.now.to_i.to_s}"
