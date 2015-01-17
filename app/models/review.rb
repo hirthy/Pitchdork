@@ -38,7 +38,7 @@ class Review
   scope :last_fm_tags_missing, where(:last_fm_tags.exists => false)
   scope :genre_missing, where(:genre.exists => false)
 
-  index({ publish_date: 1 })
+  index({ publish_date: 1 },{ name: "publish_date_index"})
 
   def album_image_path()
     ActionController::Base.helpers.image_path(self.album_image)

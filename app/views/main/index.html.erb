@@ -1,33 +1,33 @@
 <div class="rows full-wrapper" ng-controller="SearchController" data-ng-init="statsPull()">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="btn-group" dropdown is-open="status.isopen">
-        <div class="input-group search-input-group input-group-lg">
-          <input type="text" ng-model="searchText" ng-keyup="searchClick()" class="form-control">
-          <span class="input-group-btn">
-            <button ng-click="searchClick()" class="btn btn-default" type="button" ng-disabled="disabled">Artist Search</button>
-          </span>
-        </div><!-- /input-group -->
-        <ul class="dropdown-menu" role="menu">
-          <li ng-repeat="item in results">
-            <a href="#" ng-click="statsPull(item.artist);">{{ item.artist }}</a>
-          </li>
-          <li ng-show="results.length == 0">
-            <a href="#">Dang! Couldn't find any matches</a>
-          </li>
-        </ul>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <p class="text-right" style="margin-top:10px;">
-            <a ng-href="#allartists" ng-click="searchText = '';statsPull();">All Artists</a>
-          </p>
+  <span us-spinner="{radius:30, width:8, length: 16}"></span>
+  <div metrics>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="btn-group" dropdown is-open="status.isopen">
+          <div class="input-group search-input-group input-group-lg">
+            <input type="text" ng-model="searchText" ng-keyup="searchClick()" class="form-control">
+            <span class="input-group-btn">
+              <button ng-click="searchClick()" class="btn btn-default" type="button" ng-disabled="disabled">Artist Search</button>
+            </span>
+          </div><!-- /input-group -->
+          <ul class="dropdown-menu" role="menu">
+            <li ng-repeat="item in results">
+              <a href="#" ng-click="statsPull(item.artist);">{{ item.artist }}</a>
+            </li>
+            <li ng-show="results.length == 0">
+              <a href="#">Dang! Couldn't find any matches</a>
+            </li>
+          </ul>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-right" style="margin-top:10px;">
+              <a ng-href="#allartists" ng-click="searchText = '';statsPull();">All Artists</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <span us-spinner="{radius:30, width:8, length: 16}"></span>
-  <div metrics>
     <div class="row">
       <div class="col-md-6">
         <div id="artist">

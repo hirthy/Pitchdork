@@ -281,9 +281,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 ++p.reviews;
                 p.total += v.score;
-                p.total_length += v.html.length;
                 p.avg = (p.total / p.reviews).toFixed(2);
-                p.len = (p.total_length / p.reviews).toFixed(2);
                 var top_genres = ['rock','pop','rap','hip hop','electronic','indie','jazz','psychedelic','techno','noise','indie rock','lofi','r&b','indie pop','experimental'];
                 var i = top_genres.indexOf(v.genre);
                 if(i >= 0) {
@@ -296,9 +294,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 --p.reviews;
                 p.total -= v.score;
-                p.total_length -= v.html.length;
                 p.avg = p.reviews ? (p.total / p.reviews).toFixed(2) : 0;
-                p.len = p.reviews ? (p.total_length / p.reviews).toFixed(2) : 0;
                 p.genre = v.genre;
                 var top_genres = ['rock','pop','rap','hip hop','electronic','indie','jazz','psychedelic','techno','noise','indie rock','lofi','r&b','indie pop','experimental'];
                 var i = top_genres.indexOf(v.genre);
@@ -310,7 +306,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                 return p;
             },
             function () {
-                return {reviews: 0, total: 0, avg: 0, genre: '', total_length: 0};
+                return {reviews: 0, total: 0, avg: 0, genre: ''};
             }
           );
 
@@ -320,7 +316,6 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .x(d3.time.scale()
           .domain([new Date(reviewData[0].publish_date),new Date(reviewData[reviewData.length-1].publish_date)]))
         .ordering(function(d) { return d.key })
-        .xUnits(d3.time.years)
         .y(d3.scale.linear().domain([0, 10.5]))
         .yAxisLabel("Average Score")
         .rangeChart(dateChart)
@@ -351,7 +346,6 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .gap(50)
         .x(d3.time.scale()
           .domain([new Date(reviewData[0].publish_date),new Date(reviewData[reviewData.length-1].publish_date)]))
-        .xUnits(d3.time.months)
         .yAxis().ticks(0);
 
         avgNum
@@ -376,7 +370,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .yAxisPadding('10%')
         .xAxisPadding('10%')
         .maxBubbleRelativeSize(0.3)
-        .xAxisLabel('Average Review Length (characters)')
+        .xAxisLabel('Number Reviews')
         .yAxisLabel('Average Score')
         .label(function (p) {
             return p.value.genre;
@@ -385,9 +379,8 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .title(function (p) {
             
             return [
-                   "Echonest genre: " + p.value.genre,
+                   "Genre: " + p.value.genre,
                    "Number Reviews: " + p.value.reviews,
-                   "Average Review Length: " + p.value.len,
                    "Average Score: " + p.value.avg,
                    ]
                    .join("\n");
@@ -397,7 +390,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .renderVerticalGridLines(true)
         .maxBubbleRelativeSize(0.3)
         .keyAccessor(function (p) {
-            return p.value.len;
+            return p.value.reviews;
         })
         .valueAccessor(function (p) {
             return p.value.avg;

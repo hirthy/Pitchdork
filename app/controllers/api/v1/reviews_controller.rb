@@ -5,9 +5,9 @@ module Api::V1
     # GET /v1/reviews
     def index
       if params[:artist]
-        @results = Review.where(:publish_date.exists => true, :genre.exists => true, :artist => params[:artist])
+        @results = Review.only(:artist, :score, :album_title, :genre, :publish_date).where(:publish_date.exists => true, :genre.exists => true, :artist => params[:artist])
       else
-        @results = Review.where(:publish_date.exists => true, :genre.exists => true)
+        @results = Review.only(:artist, :score, :album_title, :genre, :publish_date).where(:publish_date.exists => true, :genre.exists => true)
       end
 
       render json: @results
