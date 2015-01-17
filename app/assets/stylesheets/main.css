@@ -5,8 +5,6 @@ Logo
 */
 
 #logo-container h1{
-    font-family: 'Open Sans', sans-serif;
-    background: #EEE url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAHklEQVQImWNkYGBgYGD4//8/A5wF5SBYyAr+//8PAPOCFO0Q2zq7AAAAAElFTkSuQmCC) repeat;
     font-size: 78px;
     letter-spacing: 5px;
     text-shadow: 5px -5px black, 4px -4px white;
