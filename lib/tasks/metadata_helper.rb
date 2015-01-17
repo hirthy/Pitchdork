@@ -5,7 +5,8 @@ module MetadataHelper
 
   MINIMUM_TAG_VOTE_THRESHOLD = 5
 
-  @@lastfm = Lastfm.new(ENV['last_fm_key'], ENV['last_fm_secret'])
+  @@lastfm = Lastfm.new(ENV['LAST_FM_KEY'], ENV['LAST_FM_SECRET'])
+  @@echonest_artist = Echonest::Artist.new(ENV['ECHONEST_KEY'])
 
   def add_echonest_metadata(review)
     if !review.artist || (review.artist.downcase.include? 'various artists')
@@ -19,11 +20,10 @@ module MetadataHelper
 
     artist_name = review.artist.gsub(/\//, '').downcase
 
-    artist = Echonest::Artist.new(ENV['echonest_key'])
     params = { name: artist_name  }
     max_tries = 5
     begin
-      artist_search = artist.search(params)
+      artist_search = @@echonest_artist.search(params)
     rescue Echonest::Error => e
       Rails.logger.info "Something happened with echonest, error: #{e}"
       if max_tries > 0

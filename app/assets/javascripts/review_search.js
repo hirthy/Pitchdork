@@ -306,7 +306,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                 return p;
             },
             function () {
-                return {reviews: 0, total: 0, avg: 0, genre: ''};
+                return {reviews: 0, total: 0, avg: 0, genre: '', m2: 0, variance: function() {return this.m2 / (this.count - 1);}};
             }
           );
 
