@@ -2,7 +2,7 @@ module Api::V1
   class ArtistsController < ApiController
     include CommonUtils, SearchHelper
 
-    @@client = Elasticsearch::Client.new url: ENV['es_url']
+    @@client = Elasticsearch::Client.new url: ENV['BONSAI_URL']
 
     # GET /v1/reviews
     def index
