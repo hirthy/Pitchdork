@@ -281,7 +281,9 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 ++p.reviews;
                 p.total += v.score;
-                p.avg = (p.total / p.reviews).toFixed(2);
+                var dx = v.score - p.avg;
+                p.avg = p.avg + dx / p.reviews;
+                p.m2 += dx * (v.score - p.avg);
                 var top_genres = ['rock','pop','rap','hip hop','electronic','indie','jazz','psychedelic','techno','noise','indie rock','lofi','r&b','indie pop','experimental'];
                 var i = top_genres.indexOf(v.genre);
                 if(i >= 0) {
@@ -294,8 +296,9 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 --p.reviews;
                 p.total -= v.score;
-                p.avg = p.reviews ? (p.total / p.reviews).toFixed(2) : 0;
-                p.genre = v.genre;
+                var dx = v.score - p.avg;
+                p.avg = p.reviews ? (p.avg - dx / p.reviews) : 0;
+                p.m2 -= dx * (v.score - p.avg);
                 var top_genres = ['rock','pop','rap','hip hop','electronic','indie','jazz','psychedelic','techno','noise','indie rock','lofi','r&b','indie pop','experimental'];
                 var i = top_genres.indexOf(v.genre);
                 if(i >= 0) {
@@ -306,9 +309,21 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                 return p;
             },
             function () {
-                return {reviews: 0, total: 0, avg: 0, genre: '', m2: 0, variance: function() {return this.m2 / (this.count - 1);}};
+                return {
+                    reviews: 0, 
+                    total: 0, 
+                    avg: 0, 
+                    genre: '', 
+                    m2: 0, 
+                    variance: function() {
+                        return this.reviews > 1 ? (this.m2 / (this.reviews - 1)).toFixed(2) : 0;
+                    },
+                    stdev: function() {
+                        return Math.sqrt(this.variance()).toFixed(2);
+                    }
+                };
             }
-          );
+        );
 
         scoreChart
         .width(570)
@@ -357,7 +372,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         genreChart
         .dimension(reviewsByGenre)
         .group(genreReviewsGroupByScore)
-        .x(d3.scale.linear().domain([0, genreReviewsGroupByTotal.top(1)[0].value + 50]))
+        .x(d3.scale.linear().domain([0, 10]))
         .y(d3.scale.linear().domain([0, 10]))
         .colors(colorbrewer.RdYlGn[9])
         .colorDomain([0, 10])
@@ -370,7 +385,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .yAxisPadding('10%')
         .xAxisPadding('10%')
         .maxBubbleRelativeSize(0.3)
-        .xAxisLabel('Number Reviews')
+        .xAxisLabel('Standard Deviation')
         .yAxisLabel('Average Score')
         .label(function (p) {
             return p.value.genre;
@@ -382,6 +397,8 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                    "Genre: " + p.value.genre,
                    "Number Reviews: " + p.value.reviews,
                    "Average Score: " + p.value.avg,
+                   "Std Dev: " + p.value.stdev(),
+                   "Variance: " + p.value.variance()
                    ]
                    .join("\n");
         })
@@ -390,7 +407,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
         .renderVerticalGridLines(true)
         .maxBubbleRelativeSize(0.3)
         .keyAccessor(function (p) {
-            return p.value.reviews;
+            return p.value.stdev();
         })
         .valueAccessor(function (p) {
             return p.value.avg;
