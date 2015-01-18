@@ -208,13 +208,13 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 ++p.reviews;
                 p.total += v.score;
-                p.avg = (p.total / p.reviews).toFixed(2);
+                p.avg = Number((p.total / p.reviews).toFixed(2));
                 return p;
             },
             function (p, v) {
                 --p.reviews;
                 p.total -= v.score;
-                p.avg = p.reviews ? (p.total / p.reviews).toFixed(2) : 0;
+                p.avg = p.reviews ? Number((p.total / p.reviews).toFixed(2)) : 0;
                 return p;
             },
             function () {
@@ -248,7 +248,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 ++p.reviews;
                 p.total += v.score;
-                p.avg = (p.total / p.reviews).toFixed(2);
+                p.avg = Number((p.total / p.reviews).toFixed(2));
                 p.artist = v.artist;
                 p.album = v.album_title;
                 return p;
@@ -256,7 +256,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             function (p, v) {
                 --p.reviews;
                 p.total -= v.score;
-                p.avg = p.reviews ? (p.total / p.reviews).toFixed(2) : 0;
+                p.avg = p.reviews ? Number((p.total / p.reviews).toFixed(2)) : 0;
                 p.artist = v.artist;
                 p.album = v.album_title;
                 return p;
@@ -284,6 +284,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                 var dx = v.score - p.avg;
                 p.avg = p.avg + dx / p.reviews;
                 p.m2 += dx * (v.score - p.avg);
+                p.avgRounded = Number(p.avg.toFixed(2))
                 var top_genres = ['rock','pop','rap','hip hop','electronic','indie','jazz','psychedelic','techno','noise','indie rock','lofi','r&b','indie pop','experimental'];
                 var i = top_genres.indexOf(v.genre);
                 if(i >= 0) {
@@ -299,6 +300,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                 var dx = v.score - p.avg;
                 p.avg = p.reviews ? (p.avg - dx / p.reviews) : 0;
                 p.m2 -= dx * (v.score - p.avg);
+                p.avgRounded = Number(p.avg.toFixed(2))
                 var top_genres = ['rock','pop','rap','hip hop','electronic','indie','jazz','psychedelic','techno','noise','indie rock','lofi','r&b','indie pop','experimental'];
                 var i = top_genres.indexOf(v.genre);
                 if(i >= 0) {
@@ -312,14 +314,15 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
                 return {
                     reviews: 0, 
                     total: 0, 
-                    avg: 0, 
+                    avg: 0,
+                    avgRounded: 0, 
                     genre: '', 
                     m2: 0, 
                     variance: function() {
-                        return this.reviews > 1 ? (this.m2 / (this.reviews - 1)).toFixed(2) : 0;
+                        return this.reviews > 1 ? Number((this.m2 / (this.reviews - 1)).toFixed(2)) : 0;
                     },
                     stdev: function() {
-                        return Math.sqrt(this.variance()).toFixed(2);
+                        return Number(Math.sqrt(this.variance()).toFixed(2));
                     }
                 };
             }
@@ -396,7 +399,7 @@ pitchdork.controller('SearchController', ['$scope', '$rootScope', '$modal', 'sea
             return [
                    "Genre: " + p.value.genre,
                    "Number Reviews: " + p.value.reviews,
-                   "Average Score: " + p.value.avg,
+                   "Average Score: " + p.value.avgRounded,
                    "Std Dev: " + p.value.stdev(),
                    "Variance: " + p.value.variance()
                    ]
