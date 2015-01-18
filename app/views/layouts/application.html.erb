@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-      <title></title>
+      <title>Music Metrics</title>
       <%= stylesheet_link_tag    "application", :media => "all" %>
       <%= javascript_include_tag "application" %>
       <%= javascript_include_tag "review_search" %>
@@ -11,6 +11,7 @@
       <div class="container">
         <div class="page-header">
           <h1>Music Metrics</h1>
+          <h4>A visual analysis of music ratings by date, genre, and artist. Built using <a href="http://pitchforkmedia.com" target="_blank">Pitchfork</a> data, <a href="http://the.echonest.com/" target="_blank">Echonest</a>, <a href="http://dc-js.github.io/dc.js/" target="_blank">DC.js</a> + <a href="http://d3js.org/" target="_blank">D3.js</a> + <a href="http://square.github.io/crossfilter/" target="_blank">Crossfilter</a>. <a href="https://github.com/hirthy/Pitchdork" target="_blank">Source</a>.</h4>
         </div>
         <%= yield %>
       </div>
